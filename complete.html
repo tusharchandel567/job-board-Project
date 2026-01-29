@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Job Board</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+  body {
+    background: #f4f6f9;
+  }
+  .card {
+    border-radius: 12px;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">JobBoard</a>
+    <div>
+      <button class="btn btn-outline-light btn-sm me-2" onclick="showSection('jobs')">Jobs</button>
+      <button class="btn btn-warning btn-sm" onclick="showSection('post')">Post Job</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="container text-center mt-5" id="home">
+  <h1 class="fw-bold">Find Your Dream Job</h1>
+  <p class="text-muted">Frontend-only Job Board Project</p>
+  <button class="btn btn-primary btn-lg" onclick="showSection('jobs')">Browse Jobs</button>
+</div>
+
+<!-- JOB LIST -->
+<div class="container mt-5 hidden" id="jobs">
+  <h2 class="mb-4">Available Jobs</h2>
+  <div class="row" id="jobList"></div>
+</div>
+
+<!-- JOB DETAIL -->
+<div class="container mt-5 hidden" id="detail">
+  <div class="card shadow p-4">
+    <h3 id="dTitle"></h3>
+    <h6 class="text-muted" id="dCompany"></h6>
+    <p id="dDesc" class="mt-3"></p>
+    <button class="btn btn-success" onclick="showSection('apply')">Apply Now</button>
+  </div>
+</div>
+
+<!-- POST JOB -->
+<div class="container mt-5 hidden" id="post">
+  <h2>Post a Job</h2>
+  <div class="card shadow p-4">
+    <input id="title" class="form-control mb-3" placeholder="Job Title">
+    <input id="company" class="form-control mb-3" placeholder="Company Name">
+    <textarea id="description" class="form-control mb-3" placeholder="Job Description"></textarea>
+    <button class="btn btn-primary" onclick="postJob()">Post Job</button>
+  </div>
+</div>
+
+<!-- APPLY -->
+<div class="container mt-5 hidden" id="apply">
+  <h2>Apply for Job</h2>
+  <div class="card shadow p-4">
+    <input class="form-control mb-3" placeholder="Your Name">
+    <input class="form-control mb-3" placeholder="Email">
+    <input type="file" class="form-control mb-3">
+    <button class="btn btn-success" onclick="applyJob()">Submit</button>
+  </div>
+</div>
+
+<script>
+let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+let selectedJob = null;
+
+// Navigation
+function showSection(id) {
+  document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// Post Job
+function postJob() {
+  const title = document.getElementById("title").value;
+  const company = document.getElementById("company").value;
+  const description = document.getElementById("description").value;
+
+  if (!title || !company || !description) {
+    alert("All fields required");
+    return;
+  }
+
+  jobs.push({ title, company, description });
+  localStorage.setItem("jobs", JSON.stringify(jobs));
+  alert("Job Posted Successfully");
+  document.getElementById("title").value = "";
+  document.getElementById("company").value = "";
+  document.getElementById("description").value = "";
+  loadJobs();
+  showSection("jobs");
+}
+
+// Load Jobs
+function loadJobs() {
+  const jobList = document.getElementById("jobList");
+  jobList.innerHTML = "";
+
+  jobs.forEach((job, index) => {
+    const div = document.createElement("div");
+    div.className = "col-md-4 mb-3";
+    div.innerHTML = `
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5>${job.title}</h5>
+          <h6 class="text-muted">${job.company}</h6>
+          <p>${job.description.substring(0, 80)}...</p>
+          <button class="btn btn-sm btn-primary" onclick="viewJob(${index})">View</button>
+        </div>
+      </div>
+    `;
+    jobList.appendChild(div);
+  });
+}
+
+// View Job
+function viewJob(index) {
+  selectedJob = jobs[index];
+  document.getElementById("dTitle").innerText = selectedJob.title;
+  document.getElementById("dCompany").innerText = selectedJob.company;
+  document.getElementById("dDesc").innerText = selectedJob.description;
+  showSection("detail");
+}
+
+// Apply
+function applyJob() {
+  alert("Application Submitted Successfully!");
+  showSection("home");
+}
+
+// Initial load
+loadJobs();
+</script>
+
+</body>
+</html>

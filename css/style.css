@@ -1,0 +1,22 @@
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+input, textarea {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  width: 300px;
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.job {
+  border: 1px solid #ccc;
+  margin: 10px;
+  padding: 10px;
+}
